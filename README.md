@@ -4,24 +4,62 @@ It has been generated from the template `README.md.eex` by Extractly (https://gi
 and any changes you make in this file will most likely be lost
 -->
 
-# ansi_named
-Name ANSI colors
+# color_named
+Name Color colors
 
 <!-- CI not set up yet
-![CI](https://github.com/RobertDober/ansi_named/workflows/CI/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/RobertDober/ansi_named/badge.svg?branch=master)](https://coveralls.io/github/RobertDober/ansi_named?branch=master)
-[![Inline docs](http://inch-ci.org/github/RobertDober/ansi_named.svg?branch=master)](http://inch-ci.org/github/RobertDober/ansi_named)
+![CI](https://github.com/RobertDober/color_named/workflows/CI/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/RobertDober/color_named/badge.svg?branch=master)](https://coveralls.io/github/RobertDober/color_named?branch=master)
+[![Inline docs](http://inch-ci.org/github/RobertDober/color_named.svg?branch=master)](http://inch-ci.org/github/RobertDober/color_named)
 -->
-[![Hex.pm](https://img.shields.io/hexpm/v/ansi_named.svg)](https://hex.pm/packages/ansi_named)
-[![Hex.pm](https://img.shields.io/hexpm/dw/ansi_named.svg)](https://hex.pm/packages/ansi_named)
-[![Hex.pm](https://img.shields.io/hexpm/dt/ansi_named.svg)](https://hex.pm/packages/ansi_named)
+[![Hex.pm](https://img.shields.io/hexpm/v/color_named.svg)](https://hex.pm/packages/color_named)
+[![Hex.pm](https://img.shields.io/hexpm/dw/color_named.svg)](https://hex.pm/packages/color_named)
+[![Hex.pm](https://img.shields.io/hexpm/dt/color_named.svg)](https://hex.pm/packages/color_named)
 
 **N.B.**
 
 This README contains the docstrings and doctests from the code by means of [extractly](https://hex.pm/packages/extractly)
 and the following code examples are therefor verified with `ExUnit` doctests.
 
-Documentation for `AnsiNamed`.
+Add common color names to the already existing ones in IO.ANSI
+
+The most basic usage is to get the color code of a color name which can then be used in
+IO.Color
+
+    iex(0)> ColorNamed.ansi_color(:indigo)
+    {54}
+
+Which can then be used with IO.ANSI, however there is a more convenient function
+
+    iex(1)> ColorNamed.ansi_code(:indigo)
+    IO.ANSI.color(54)
+
+If your terminal supports it you can also use RGB values, like so
+
+    iex(2)> ColorNamed.rgb_code("#f9a602")
+    "[38;5;249;166;2m"
+
+with all of the HTML color names available
+
+      iex(3)> ColorNamed.html_color("Gold")
+      {255, 215, 0}
+
+which, then, of course can be plugged into `rgb_code` again
+
+    iex(4)> ColorNamed.rgb_code("Gold")
+    "[38;5;255;215;0m"
+
+Other color name spaces might follow
+
+
+Return a list of all defined ansi_color_names
+    iex(800)> ansi_color_names() |> Enum.take(3)
+    ~w[ black maroon toad_in_love ]
+
+Return a list of all defined html_color_names
+
+    iex(906)> html_color_names() |> Enum.take(3)
+    ~w[IndianRed LightCoral Salmon]
 
 
 ## Author

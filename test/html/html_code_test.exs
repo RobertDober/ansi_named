@@ -1,7 +1,11 @@
-defmodule ColorNamed.HtmlColorNames do
+defmodule Test.Html.HtmlCodeTest do
+  use ExUnit.Case
 
-  defmacro __using__(_opts) do
-    html_colors = [
+  
+  import ColorNamed, only: [html_code: 1, html_color: 1]
+
+  describe "legal html codes" do
+    definitions = [
       { "IndianRed", {205, 92, 92}},
       { "LightCoral", {240, 128, 128}},
       { "Salmon", {250, 128, 114}},
@@ -144,25 +148,34 @@ defmodule ColorNamed.HtmlColorNames do
       { "DarkSlateGray", {47, 79, 79}},
       { "Black", {0, 0, 0} } ]
 
-    html_color_names = html_colors |> Enum.map(fn {name, _} -> name end)
-    quote do
-      @doc """
-      Return a list of all defined html_color_names
-
-          iex(906)> html_color_names() |> Enum.take(3)
-          ~w[IndianRed LightCoral Salmon]
-      """
-      @spec html_color_names() :: list(binary())
-      def html_color_names do
-        unquote(html_color_names)
+    Enum.each( definitions,
+    fn {name, rgb_triple} ->
+      tag = String.to_atom(name)
+      quote do
+        unquote do
+          @tag tag
+          test("color: '" <> name <> "' (#{inspect(rgb_triple)})") do
+            assert html_color(unquote(name)) == unquote(Macro.escape(rgb_triple))
+          end
+        end
       end
+    end)
 
-      @doc false
-      @spec html_colors() :: map()
-      def html_colors do
-        unquote(Macro.escape(html_colors)) |> Enum.into(%{})
+    Enum.each( definitions,
+    fn {name, rgb_triple} ->
+      ansi_rgb = rgb_triple
+      |> Tuple.to_list
+      |> Enum.join(";")
+
+      tag = String.to_atom(name)
+      quote do
+        unquote do
+          @tag tag
+          test("code: '" <> name <> "' (#{inspect(rgb_triple)})") do
+            assert html_code(unquote(name)) == "\e[38;5;#{unquote(ansi_rgb)}m"
+          end
+        end
       end
-    end
+    end)
   end
 end
-#  SPDX-License-Identifier: Apache-2.0

@@ -19,6 +19,9 @@ and the following code examples are therefor verified with `ExUnit` doctests.
 
 <%= xtra.moduledoc "ColorNamed" %>
 
+<%= xtra.functiondoc "ColorNamed.ansi_color_names/0" %>
+<%= xtra.functiondoc "ColorNamed.html_color_names/0" %>
+
 ## Author
 
 Copyright © 2021 Robert Dober

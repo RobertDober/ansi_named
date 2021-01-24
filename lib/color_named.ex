@@ -15,7 +15,7 @@ defmodule ColorNamed do
 
   If your terminal supports it you can also use RGB values, like so
 
-      iex(2)> ColorNamed.rgb_code("#f9a602")
+      iex(2)> ColorNamed.html_code("#f9a602")
       "\e[38;5;249;166;2m"
 
   with all of the HTML color names available
@@ -23,14 +23,18 @@ defmodule ColorNamed do
         iex(3)> ColorNamed.html_color("Gold")
         {255, 215, 0}
 
-  which, then, of course can be plugged into `rgb_code` again
+  which, then, of course can be plugged into `html_code` again
 
-      iex(4)> ColorNamed.rgb_code("Gold")
+      iex(4)> ColorNamed.html_code("Gold")
       "\e[38;5;255;215;0m"
+
+  The same holds for HTML type hex color strings
+
+        iex(5)> ColorNamed.html_code("#d0e0f0")
+        "\e[38;5;208;224;240m"
 
   Other color name spaces might follow
   """
-
 
   use __MODULE__.AnsiColorNames
   use __MODULE__.HtmlColorNames
@@ -38,7 +42,7 @@ defmodule ColorNamed do
 
   @doc """
   ANSI code from an ansi color name
-        iex(5)> ansi_code(:olive_drab)
+        iex(6)> ansi_code(:olive_drab)
         "\e[38;5;64m"
   """
   @spec ansi_code(color_name_t()) :: binary()
@@ -52,7 +56,7 @@ defmodule ColorNamed do
   """
   @spec ansi_color(color_name_t()) :: ansi_color_t()
   def ansi_color(name) do
-    case Map.fetch(@ansi_color_names, to_string(name)) do
+    case Map.fetch(ansi_colors(), to_string(name)) do
       {:ok, value} -> {value}
       :error     -> raise(ColorNamed.UndefinedName, "Namespace ANSI, unknown name #{name}")
     end
@@ -63,19 +67,19 @@ defmodule ColorNamed do
   """
   @spec html_color(color_name_t()) :: rgb_color_t()
   def html_color(name) do
-    case Map.fetch(@html_color_names, to_string(name)) do
+    case Map.fetch(html_colors(), to_string(name)) do
       {:ok, value} -> value
       :error     -> raise(ColorNamed.UndefinedName, "Namespace HTML, unknown name #{name}")
     end
   end
 
-  @spec rgb_code(binary()) :: binary()
-  def rgb_code(hex_or_name)
-  def rgb_code("#" <> hex) do
+  @spec html_code(binary()) :: binary()
+  def html_code(hex_or_name)
+  def html_code("#" <> hex) do
     {r, g, b} = _parse_hex(hex)
     _ansi_rgb(r, g, b)
   end
-  def rgb_code(name) do
+  def html_code(name) do
     {r, g, b} = html_color(name)
     _ansi_rgb(r, g, b)
   end
@@ -90,7 +94,7 @@ defmodule ColorNamed do
   @spec _parse_hex(binary()) :: rgb_color_t()
   defp _parse_hex(hex) do
     case Regex.run(@hex_rg, hex) do
-      nil -> raise(ColorNamed.UndefinedName, "Namespace RGB, illegal hex RGB spec #{hex}")
+      nil -> raise(ColorNamed.UndefinedName, "Namespace RGB, illegal hex RGB spec ##{hex}")
       [_|rgb] -> _rgb_to_tuple(rgb)
     end
   end
