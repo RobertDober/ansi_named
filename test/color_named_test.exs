@@ -1,5 +1,5 @@
 defmodule ColorNamedTest do
   use ExUnit.Case
-  doctest ColorNamed
+  doctest ColorNamed, import: true
 
 end
